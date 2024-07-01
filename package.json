@@ -1,0 +1,55 @@
+{
+  "name": "delayed-async-task",
+  "version": "1.0.0",
+  "description": "A one-time task scheduler for asynchronous tasks, designed to schedule a single delayed execution. Features status getters to communicate the execution status, the ability to abort a pending execution, and the option to gracefully await the completion of an ongoing execution.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ori88c/delayed-async-task.git"
+  },
+  "contributors": [
+    "Ori Cohen (https://github.com/ori88c/)"
+  ],
+  "homepage": "https://github.com/ori88c/delayed-async-task#readme",
+  "author": "Ori Cohen",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "jest"
+  },
+  "keywords": [
+    "delayed",
+    "deferred",
+    "task",
+    "job",
+    "async",
+    "timer",
+    "scheduler",
+    "executor",
+    "runner",
+    "setTimeout",
+    "onetime",
+    "one-time",
+    "typescript",
+    "ts",
+    "nodejs"
+  ],
+  "engines": {
+    "node": ">=14.5.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  },
+  "types": "./dist/delayed-async-task.d.ts",
+  "main": "./dist/delayed-async-task.js",
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ]
+}
