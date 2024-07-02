@@ -24,6 +24,7 @@
     "job",
     "async",
     "timer",
+    "schedule",
     "scheduler",
     "executor",
     "runner",
@@ -32,6 +33,8 @@
     "one-time",
     "typescript",
     "ts",
+    "dangling",
+    "promise",
     "nodejs"
   ],
   "engines": {
