@@ -11,7 +11,7 @@ This class is ideal for scenarios where precise control over the execution and t
 
 ## Key Features
 
-* __Modern Substitute for Javascript's `setTimeout`__: Specifically designed for scheduling asynchronous tasks.
+* __Modern Substitute for Javascript's 'setTimeout'__: Specifically designed for scheduling asynchronous tasks.
 * __Execution Status Getters__: Allows users to check the task's execution status, helping to prevent potential race conditions.
 * __Graceful and Deterministic Termination__: The `awaitCompletionIfCurrentlyExecuting` method resolves once the currently executing task finishes or resolves immediately if the task is not executing.
 * __Robust Error Handling__: If the task throws an uncaught error, the error is captured and accessible via the `uncaughtRejection` getter.
@@ -62,7 +62,32 @@ class Component {
   }
 }
 ```
-While it is possible to manually address this issue by avoiding dangling promises and introducing more state properties, doing so can compromise the **Single Responsibility Principle** of your component. It can also decrease readability and likely introduce code duplication, as this need is frequent.
+While it is possible to manually address this issue by avoiding dangling promises and introducing more state properties, doing so can compromise the **Single Responsibility Principle** of your component. It can also decrease readability and likely introduce code duplication, as this need is frequent.  
+The above example can be fixed using the `DelayedAsyncTask` class as follows:
+```ts
+import { DelayedAsyncTask } from 'delayed-async-task';
+
+class Component {
+  private readonly _delayedTask: AsyncDelayedTask;
+
+  public start(): void {
+    this._delayedTask = new AsyncDelayedTask(
+      this._prolongedTask.bind(this),
+      8000
+    );
+  }
+
+  public async stop(): Promise<void> {
+    if (!this._delayedTask.tryAbort()) {
+      await this._delayedTask.awaitCompletionIfCurrentlyExecuting();
+    }
+  }
+
+  private async _prolongedTask(): Promise<void> {
+    // Perform your task here.
+  }
+}
+```
 
 Another scenario where this feature is highly recommended is when a schedule might be aborted, such as in an abort-and-reschedule situation. If the task is currently executing, you may not be able to abort it. In such cases, you can ignore the reschedule request, await the current execution to complete, or implement any other business logic that suits your requirements.
 
