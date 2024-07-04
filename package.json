@@ -1,7 +1,7 @@
 {
   "name": "delayed-async-task",
-  "version": "1.0.0",
-  "description": "A one-time task scheduler for asynchronous tasks, designed to schedule a single delayed execution. Features status getters to communicate the execution status, the ability to abort a pending execution, and the option to gracefully await the completion of an ongoing execution.",
+  "version": "1.0.1",
+  "description": "A modern `setTimeout` substitute tailored for asynchronous tasks, designed to schedule a single delayed execution. Features status getters to communicate the execution status, the ability to abort a pending execution, and the option to gracefully await the completion of an ongoing execution.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ori88c/delayed-async-task.git"
@@ -29,6 +29,7 @@
     "executor",
     "runner",
     "setTimeout",
+    "tasks scheduler",
     "onetime",
     "one-time",
     "typescript",
