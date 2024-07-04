@@ -38,7 +38,7 @@ describe('DelayedAsyncTask tests', () => {
                         res();
                         taskCompletedSuccessfully = true;
                     };
-                    // The task returns a promise in 'pending' state. It will be fulfilled
+                    // The task returns a promise in pending-state. It will be fulfilled
                     // only by manually invoking `completeTask`.
                 });
             });
@@ -53,12 +53,13 @@ describe('DelayedAsyncTask tests', () => {
             expect(delayedTask.isCompleted).toBe(false);
             expect(delayedTask.isUncaughtRejectionOccurred).toBe(false);
             expect(delayedTask.uncaughtRejection).toBe(undefined);
-            // The time has come, `setTimeout` will trigger the task's execution.
+            // The time has come, `setTimeout` will trigger the execution.
             jest.runOnlyPendingTimers();
-            // Trigger an event loop, only resolveFast will resolved as we haven't
+            // Trigger an event loop. Only `resolveFast` will be resolved as we haven't
             // decided to complete the task yet.
+            const awaitCompletionPromise = delayedTask.awaitCompletionIfCurrentlyExecuting();
             yield Promise.race([
-                delayedTask.awaitCompletionIfCurrentlyExecuting(),
+                awaitCompletionPromise,
                 resolveFast()
             ]);
             // Execution indicator should be on.
@@ -72,7 +73,7 @@ describe('DelayedAsyncTask tests', () => {
             expect(taskCompletedSuccessfully).toBe(false);
             // Now, we simulate the task's completion (its promise will be fulfilled).
             completeTask();
-            yield delayedTask.awaitCompletionIfCurrentlyExecuting();
+            yield awaitCompletionPromise;
             expect(taskCompletedSuccessfully).toBe(true);
             expect(delayedTask.isCompleted).toBe(true);
             // All other getters should be false.
@@ -82,7 +83,7 @@ describe('DelayedAsyncTask tests', () => {
             expect(delayedTask.isUncaughtRejectionOccurred).toBe(false);
             expect(delayedTask.uncaughtRejection).toBe(undefined);
             // Remains unchanged:
-            // A single DelayedAsyncTask instance triggers only 1 `setTimeout` call, in the c'tor.
+            // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
         }));
     });
@@ -114,7 +115,7 @@ describe('DelayedAsyncTask tests', () => {
             expect(delayedTask.isUncaughtRejectionOccurred).toBe(false);
             expect(delayedTask.uncaughtRejection).toBe(undefined);
             // Remains unchanged:
-            // A single DelayedAsyncTask instance triggers only 1 `setTimeout` call, in the c'tor.
+            // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
         }));
         test('should fail aborting task when execution is already ongoing', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -122,7 +123,7 @@ describe('DelayedAsyncTask tests', () => {
             const task = () => __awaiter(void 0, void 0, void 0, function* () {
                 return new Promise(res => {
                     completeTask = res;
-                    // The task returns a promise in 'pending' state. It will be fulfilled
+                    // The task returns a promise in pending-state. It will be fulfilled
                     // only by manually invoking `completeTask`.
                 });
             });
@@ -131,16 +132,17 @@ describe('DelayedAsyncTask tests', () => {
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1); // Scheduled immediately on instantiation.
             // The time has come, `setTimeout` will trigger the task's execution.
             jest.runOnlyPendingTimers();
-            // Trigger an event loop, only resolveFast will resolved as we haven't
+            // Trigger an event loop, only `resolveFast` will resolved as we haven't
             // decided to complete the task yet.
+            const awaitCompletionPromise = delayedTask.awaitCompletionIfCurrentlyExecuting();
             yield Promise.race([
-                delayedTask.awaitCompletionIfCurrentlyExecuting(),
+                awaitCompletionPromise,
                 resolveFast()
             ]);
             // Cannot abort a task which already began execution.
             expect(delayedTask.tryAbort()).toBe(false);
             completeTask();
-            yield delayedTask.awaitCompletionIfCurrentlyExecuting();
+            yield awaitCompletionPromise;
             expect(delayedTask.isCompleted).toBe(true);
             // All other getters should be false.
             expect(delayedTask.isPending).toBe(false);
@@ -149,7 +151,7 @@ describe('DelayedAsyncTask tests', () => {
             expect(delayedTask.isUncaughtRejectionOccurred).toBe(false);
             expect(delayedTask.uncaughtRejection).toBe(undefined);
             // Remains unchanged:
-            // A single DelayedAsyncTask instance triggers only 1 `setTimeout` call, in the c'tor.
+            // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
         }));
         test('should capture uncaught exception when thrown during execution', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -175,7 +177,7 @@ describe('DelayedAsyncTask tests', () => {
             expect(delayedTask.isExecuting).toBe(false);
             expect(delayedTask.isCompleted).toBe(false);
             // Remains unchanged:
-            // A single DelayedAsyncTask instance triggers only 1 `setTimeout` call, in the c'tor.
+            // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
         }));
     });
