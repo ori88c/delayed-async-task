@@ -150,10 +150,8 @@ class DelayedAsyncTask {
      *          if no task was in progress.
      */
     awaitCompletionIfCurrentlyExecuting() {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            return (_a = this._currentlyExecutingTaskPromise) !== null && _a !== void 0 ? _a : Promise.resolve();
-        });
+        var _a;
+        return (_a = this._currentlyExecutingTaskPromise) !== null && _a !== void 0 ? _a : Promise.resolve();
     }
     _handleTaskExecution() {
         return __awaiter(this, void 0, void 0, function* () {
