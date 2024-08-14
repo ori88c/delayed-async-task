@@ -163,7 +163,7 @@ export class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
      * @returns A promise that resolves once the currently executing task finishes, or resolves immediately
      *          if no task was in progress.
      */
-    public async awaitCompletionIfCurrentlyExecuting(): Promise<void> {
+    public awaitCompletionIfCurrentlyExecuting(): Promise<void> {
         return this._currentlyExecutingTaskPromise ?? Promise.resolve();
     }
     
