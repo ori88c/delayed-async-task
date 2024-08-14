@@ -9,7 +9,7 @@ Key features include:
 
 This class is ideal for scenarios where precise control over the execution and termination of asynchronous tasks is required.
 
-## Key Features
+## Key Features :sparkles:
 
 * __Modern Substitute for Javascript's 'setTimeout'__: Specifically designed for scheduling asynchronous tasks.
 * __Execution Status Getters__: Allows users to check the task's execution status, helping to prevent potential race conditions.
@@ -22,7 +22,7 @@ This class is ideal for scenarios where precise control over the execution and t
 * ES6 Compatibility.
 * TypeScript support.
 
-## Execution Status Getters
+## Execution Status Getters :rocket:
 
 The `DelayedAsyncTask` class provides five getter methods to communicate the task's status to users:
 
@@ -32,7 +32,7 @@ The `DelayedAsyncTask` class provides five getter methods to communicate the tas
 * `isCompleted`: Indicates that the task has completed.
 * `isUncaughtRejectionOccurred`: Indicates that the task threw an uncaught error. The error can be accessed using the `uncaughtRejection` getter.
 
-## Graceful and Deterministic Termination
+## Graceful and Deterministic Termination :hourglass:
 
 In the context of asynchronous tasks and schedulers, graceful and deterministic termination is **often overlooked**. `DelayedAsyncTask` provides an out-of-the-box mechanism to await the completion of an asynchronous task that has already started but not yet finished, via the `awaitCompletionIfCurrentlyExecuting` method.
 
@@ -101,7 +101,7 @@ This component features non-durable scheduling, which means that if the app cras
 
 If you need to guarantee durability over a multi-node deployment, consider using this scheduler as a building block or use other custom-made solutions for that purpose.
 
-## Error Handling
+## Error Handling :warning:
 
 Unlike `setTimeout` in Node.js, where errors from rejected promises propagate to the event loop and trigger an `uncaughtRejection` event, this package offers robust error handling:
 
@@ -171,6 +171,6 @@ class BackgroundUpdatesManager {
 }
 ```
 
-## License
+## License :scroll:
 
 [MIT](LICENSE)
