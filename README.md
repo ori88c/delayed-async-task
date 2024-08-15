@@ -110,7 +110,7 @@ Unlike `setTimeout` in Node.js, where errors from rejected promises propagate to
 
 Ideally, a delayed task should handle its own errors and **avoid** throwing uncaught exceptions.
 
-## Use-case Example
+## Use-case Example :man_technologist:
 
 Consider a Background Updates Manager. For simplicity, we assume that updates occur only following an on-demand request by the admin, triggered by the execution of the `scheduleNextJob` method. Additionally, assume that only one future background update task can be scheduled at any given time. This means that scheduling a new task will abort any previously scheduled task that has not yet started.
 
@@ -170,6 +170,10 @@ class BackgroundUpdatesManager {
   }
 }
 ```
+
+## Breaking Change in Version 2.0.0
+
+In version 2.0.0, the target compatibility has been upgraded from ES6 to ES2020. This change was made to leverage the widespread adoption of ES2020, in particular its native support for async/await.
 
 ## License :scroll:
 

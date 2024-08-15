@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const delayed_async_task_1 = require("./delayed-async-task");
 /**
@@ -16,7 +7,7 @@ const delayed_async_task_1 = require("./delayed-async-task");
  * The one-and-only purpose of this function, is triggerring an event-loop iteration.
  * It is relevant whenever a test needs to simulate tasks from the Node.js' micro-tasks queue.
  */
-const resolveFast = () => __awaiter(void 0, void 0, void 0, function* () { expect(14).toBeGreaterThan(3); });
+const resolveFast = async () => { expect(14).toBeGreaterThan(3); };
 const MOCK_MS_DELAY_TILL_EXECUTION = 83564;
 describe('DelayedAsyncTask tests', () => {
     let setTimeoutSpy;
@@ -29,18 +20,16 @@ describe('DelayedAsyncTask tests', () => {
         jest.useRealTimers();
     });
     describe('Happy path tests', () => {
-        test('should indicate correct state when task executes successfully', () => __awaiter(void 0, void 0, void 0, function* () {
+        test('should indicate correct state when task executes successfully', async () => {
             let taskCompletedSuccessfully = false;
             let completeTask;
-            const task = () => __awaiter(void 0, void 0, void 0, function* () {
-                return new Promise(res => {
-                    completeTask = () => {
-                        res();
-                        taskCompletedSuccessfully = true;
-                    };
-                    // The task returns a promise in pending-state. It will be fulfilled
-                    // only by manually invoking `completeTask`.
-                });
+            const task = async () => new Promise(res => {
+                completeTask = () => {
+                    res();
+                    taskCompletedSuccessfully = true;
+                };
+                // The task returns a promise in pending-state. It will be fulfilled
+                // only by manually invoking `completeTask`.
             });
             expect(setTimeoutSpy).toHaveBeenCalledTimes(0);
             const delayedTask = new delayed_async_task_1.DelayedAsyncTask(task, MOCK_MS_DELAY_TILL_EXECUTION);
@@ -58,7 +47,7 @@ describe('DelayedAsyncTask tests', () => {
             // Trigger an event loop. Only `resolveFast` will be resolved as we haven't
             // decided to complete the task yet.
             const awaitCompletionPromise = delayedTask.awaitCompletionIfCurrentlyExecuting();
-            yield Promise.race([
+            await Promise.race([
                 awaitCompletionPromise,
                 resolveFast()
             ]);
@@ -73,7 +62,7 @@ describe('DelayedAsyncTask tests', () => {
             expect(taskCompletedSuccessfully).toBe(false);
             // Now, we simulate the task's completion (its promise will be fulfilled).
             completeTask();
-            yield awaitCompletionPromise;
+            await awaitCompletionPromise;
             expect(taskCompletedSuccessfully).toBe(true);
             expect(delayedTask.isCompleted).toBe(true);
             // All other getters should be false.
@@ -85,12 +74,12 @@ describe('DelayedAsyncTask tests', () => {
             // Remains unchanged:
             // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-        }));
+        });
     });
     describe('Negative path tests', () => {
-        test('should successfully abort execution when the abort attempt precedes the scheduled time', () => __awaiter(void 0, void 0, void 0, function* () {
+        test('should successfully abort execution when the abort attempt precedes the scheduled time', async () => {
             let didTaskExecute = false;
-            const task = () => __awaiter(void 0, void 0, void 0, function* () { didTaskExecute = true; });
+            const task = async () => { didTaskExecute = true; };
             expect(setTimeoutSpy).toHaveBeenCalledTimes(0);
             const delayedTask = new delayed_async_task_1.DelayedAsyncTask(task, MOCK_MS_DELAY_TILL_EXECUTION);
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1); // Scheduled immediately on instantiation.
@@ -105,7 +94,7 @@ describe('DelayedAsyncTask tests', () => {
             // No pending timer should exist, thus nothing should happen:
             jest.runOnlyPendingTimers();
             // Should resolve immediately as no task is executing:
-            yield delayedTask.awaitCompletionIfCurrentlyExecuting();
+            await delayedTask.awaitCompletionIfCurrentlyExecuting();
             expect(didTaskExecute).toBe(false);
             expect(delayedTask.isAborted).toBe(true);
             // All other getters should be false.
@@ -117,15 +106,13 @@ describe('DelayedAsyncTask tests', () => {
             // Remains unchanged:
             // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-        }));
-        test('should fail aborting task when execution is already ongoing', () => __awaiter(void 0, void 0, void 0, function* () {
+        });
+        test('should fail aborting task when execution is already ongoing', async () => {
             let completeTask;
-            const task = () => __awaiter(void 0, void 0, void 0, function* () {
-                return new Promise(res => {
-                    completeTask = res;
-                    // The task returns a promise in pending-state. It will be fulfilled
-                    // only by manually invoking `completeTask`.
-                });
+            const task = async () => new Promise(res => {
+                completeTask = res;
+                // The task returns a promise in pending-state. It will be fulfilled
+                // only by manually invoking `completeTask`.
             });
             expect(setTimeoutSpy).toHaveBeenCalledTimes(0);
             const delayedTask = new delayed_async_task_1.DelayedAsyncTask(task, MOCK_MS_DELAY_TILL_EXECUTION);
@@ -135,14 +122,14 @@ describe('DelayedAsyncTask tests', () => {
             // Trigger an event loop, only `resolveFast` will resolved as we haven't
             // decided to complete the task yet.
             const awaitCompletionPromise = delayedTask.awaitCompletionIfCurrentlyExecuting();
-            yield Promise.race([
+            await Promise.race([
                 awaitCompletionPromise,
                 resolveFast()
             ]);
             // Cannot abort a task which already began execution.
             expect(delayedTask.tryAbort()).toBe(false);
             completeTask();
-            yield awaitCompletionPromise;
+            await awaitCompletionPromise;
             expect(delayedTask.isCompleted).toBe(true);
             // All other getters should be false.
             expect(delayedTask.isPending).toBe(false);
@@ -153,10 +140,10 @@ describe('DelayedAsyncTask tests', () => {
             // Remains unchanged:
             // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-        }));
-        test('should capture uncaught exception when thrown during execution', () => __awaiter(void 0, void 0, void 0, function* () {
+        });
+        test('should capture uncaught exception when thrown during execution', async () => {
             const error = new Error("בוקה ומבוקה! ולב נמס! ופק ברכיים");
-            const task = () => __awaiter(void 0, void 0, void 0, function* () { throw error; });
+            const task = async () => { throw error; };
             expect(setTimeoutSpy).toHaveBeenCalledTimes(0);
             const delayedTask = new delayed_async_task_1.DelayedAsyncTask(task, MOCK_MS_DELAY_TILL_EXECUTION);
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1); // Scheduled immediately on instantiation.
@@ -168,7 +155,7 @@ describe('DelayedAsyncTask tests', () => {
             expect(delayedTask.isUncaughtRejectionOccurred).toBe(false);
             expect(delayedTask.uncaughtRejection).toBe(undefined);
             jest.runOnlyPendingTimers();
-            yield delayedTask.awaitCompletionIfCurrentlyExecuting();
+            await delayedTask.awaitCompletionIfCurrentlyExecuting();
             expect(delayedTask.isUncaughtRejectionOccurred).toBe(true);
             expect(delayedTask.uncaughtRejection).toBe(error);
             // All other getters should be false.
@@ -179,7 +166,7 @@ describe('DelayedAsyncTask tests', () => {
             // Remains unchanged:
             // A single DelayedAsyncTask instance triggers exactly 1 `setTimeout` call, in the c'tor.
             expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-        }));
+        });
     });
 });
 //# sourceMappingURL=delayed-async-task.test.js.map
