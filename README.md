@@ -5,7 +5,7 @@ The `DelayedAsyncTask` class provides a modern substitute for JavaScript's built
 Key features include:
 
 * __Status Communication__: Easily check the current status of the scheduled task.
-* __Graceful Await__: Await the completion of an ongoing execution, ensuring deterministic termination when needed.
+* __Graceful Termination__: Await the completion of an ongoing execution, ensuring deterministic termination when needed.
 
 This class is ideal for scenarios where precise control over the execution and termination of asynchronous tasks is required.
 
@@ -13,14 +13,23 @@ This class is ideal for scenarios where precise control over the execution and t
 
 * __Modern Substitute for Javascript's 'setTimeout'__: Specifically designed for scheduling asynchronous tasks.
 * __Execution Status Getters__: Allows users to check the task's execution status, helping to prevent potential race conditions.
-* __Graceful and Deterministic Termination__: The `awaitCompletionIfCurrentlyExecuting` method resolves once the currently executing task finishes or resolves immediately if the task is not executing.
+* __Graceful and Deterministic Termination__: The `awaitCompletionIfCurrentlyExecuting` method resolves once the currently executing task finishes, or resolves immediately if the task is not executing.
 * __Robust Error Handling__: If the task throws an uncaught error, the error is captured and accessible via the `uncaughtRejection` getter.
-* __Comprehensive Documentation__: The class is thoroughly documented, enabling IDEs to provide helpful tooltips that enhance the coding experience.
-* __Fully Tested__: Covered extensively by unit tests.
+* __Comprehensive Documentation :books:__: The class is thoroughly documented, enabling IDEs to provide helpful tooltips that enhance the coding experience.
+* __Fully Tested :test_tube:__: Extensively covered by unit tests.
 * __No External Runtime Dependencies__: Lightweight component, only development dependencies are used.
 * Non-Durable Scheduling: Scheduling stops if the application crashes or goes down.
-* ES6 Compatibility.
+* ES2020 Compatibility.
 * TypeScript support.
+
+## API
+
+The `DelayedAsyncTask` class provides the following methods:
+
+* __tryAbort__: Attempts to abort a pending task execution, if one exists.
+* __awaitCompletionIfCurrentlyExecuting__: This method resolves once the currently executing task completes, or resolves immediately if the task is not currently in-progress.
+
+If needed, refer to the code documentation for a more comprehensive description of each method.
 
 ## Execution Status Getters :rocket:
 
@@ -41,7 +50,7 @@ Without deterministic termination, leftover references from incomplete execution
 This feature is crucial whenever your component has a `stop` or `terminate` method. Consider the following example:
 ```ts
 class Component {
-  private readonly _timeout: NodeJS.Timeout?;
+  private _timeout: NodeJS.Timeout;
 
   public start(): void {
     this._timeout = setTimeout(this._prolongedTask.bind(this), 8000);
@@ -50,7 +59,7 @@ class Component {
   public async stop(): Promise<void> {
     if (this._timeout) {
       clearTimeout(this._timeout);
-      this._timeout = null;
+      this._timeout = undefined;
       // The dangling promise of _prolongedTask might still be running in the
       // background, leading to non-deterministic termination and potential
       // race conditions or unexpected behavior.
@@ -62,7 +71,7 @@ class Component {
   }
 }
 ```
-While it is possible to manually address this issue by avoiding dangling promises and introducing more state properties, doing so can compromise the **Single Responsibility Principle** of your component. It can also decrease readability and likely introduce code duplication, as this need is frequent.  
+While it is possible to manually address this issue by **avoiding dangling promises** and introducing more state properties, doing so can compromise the **Single Responsibility Principle** of your component. It can also decrease readability and likely introduce code duplication, as this need is frequent.  
 The above example can be fixed using the `DelayedAsyncTask` class as follows:
 ```ts
 import { DelayedAsyncTask } from 'delayed-async-task';

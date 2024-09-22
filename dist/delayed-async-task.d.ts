@@ -28,9 +28,9 @@
  */
 export declare class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
     private _status;
-    private _timeout?;
-    private _uncaughtRejection?;
-    private _currentlyExecutingTaskPromise?;
+    private _timeout;
+    private _uncaughtRejection;
+    private _currentlyExecutingTaskPromise;
     private readonly _task;
     /**
      * constructor
@@ -38,9 +38,9 @@ export declare class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
      * Schedules the provided task to start execution after the specified delay.
      *
      * @param task The async function to execute.
-     * @param msDelayTillExecution The delay in milliseconds before the task starts execution.
+     * @param delayTillExecutionMs The delay in milliseconds before the task starts execution.
      */
-    constructor(task: () => Promise<void>, msDelayTillExecution: number);
+    constructor(task: () => Promise<void>, delayTillExecutionMs: number);
     /**
      * isPending
      *
@@ -96,7 +96,7 @@ export declare class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
     /**
      * awaitCompletionIfCurrentlyExecuting
      *
-     * This method resolves once the currently executing task finishes, or resolves immediately if the
+     * This method resolves once the currently executing task completes, or resolves immediately if the
      * task is not currently in-progress.
      *
      * This capability addresses the need for graceful and deterministic termination:

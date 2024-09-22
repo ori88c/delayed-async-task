@@ -36,9 +36,9 @@ class DelayedAsyncTask {
      * Schedules the provided task to start execution after the specified delay.
      *
      * @param task The async function to execute.
-     * @param msDelayTillExecution The delay in milliseconds before the task starts execution.
+     * @param delayTillExecutionMs The delay in milliseconds before the task starts execution.
      */
-    constructor(task, msDelayTillExecution) {
+    constructor(task, delayTillExecutionMs) {
         this._status = "PENDING";
         this._task = task;
         // The `setTimeout` callback is deliberately non-async, to prevent a dangling promise.
@@ -47,7 +47,7 @@ class DelayedAsyncTask {
             this._timeout = undefined;
             this._status = "EXECUTING";
             this._currentlyExecutingTaskPromise = this._handleTaskExecution();
-        }, msDelayTillExecution);
+        }, delayTillExecutionMs);
     }
     /**
      * isPending
@@ -124,7 +124,7 @@ class DelayedAsyncTask {
     /**
      * awaitCompletionIfCurrentlyExecuting
      *
-     * This method resolves once the currently executing task finishes, or resolves immediately if the
+     * This method resolves once the currently executing task completes, or resolves immediately if the
      * task is not currently in-progress.
      *
      * This capability addresses the need for graceful and deterministic termination:

@@ -35,9 +35,9 @@ type DelayedAsyncTaskStatus =
  */
 export class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
     private _status: DelayedAsyncTaskStatus = "PENDING";
-    private _timeout?: ReturnType<typeof setTimeout>;
-    private _uncaughtRejection?: UncaughtRejectionErrorType;
-    private _currentlyExecutingTaskPromise?: Promise<void>;
+    private _timeout: ReturnType<typeof setTimeout>;
+    private _uncaughtRejection: UncaughtRejectionErrorType;
+    private _currentlyExecutingTaskPromise: Promise<void>;
 
     private readonly _task: () => Promise<void>;
 
@@ -47,9 +47,9 @@ export class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
      * Schedules the provided task to start execution after the specified delay.
      * 
      * @param task The async function to execute.
-     * @param msDelayTillExecution The delay in milliseconds before the task starts execution.
+     * @param delayTillExecutionMs The delay in milliseconds before the task starts execution.
      */
-    constructor(task: () => Promise<void>, msDelayTillExecution: number) {
+    constructor(task: () => Promise<void>, delayTillExecutionMs: number) {
         this._task = task;
 
         // The `setTimeout` callback is deliberately non-async, to prevent a dangling promise.
@@ -60,7 +60,7 @@ export class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
                 this._status = "EXECUTING";
                 this._currentlyExecutingTaskPromise = this._handleTaskExecution();
             },
-            msDelayTillExecution
+            delayTillExecutionMs
         );
     }
     
@@ -147,7 +147,7 @@ export class DelayedAsyncTask<UncaughtRejectionErrorType = Error> {
     /**
      * awaitCompletionIfCurrentlyExecuting
      * 
-     * This method resolves once the currently executing task finishes, or resolves immediately if the
+     * This method resolves once the currently executing task completes, or resolves immediately if the
      * task is not currently in-progress.
      * 
      * This capability addresses the need for graceful and deterministic termination:
