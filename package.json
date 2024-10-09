@@ -1,6 +1,6 @@
 {
   "name": "delayed-async-task",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A modern `setTimeout` substitute tailored for asynchronous tasks, designed to schedule a single delayed execution. Features status getters to communicate the execution status, the ability to abort a pending execution, and the option to gracefully await the completion of an ongoing execution.",
   "repository": {
     "type": "git",
@@ -34,6 +34,12 @@
     "one-time",
     "onetime-execution",
     "single-execution",
+    "graceful-termination",
+    "graceful-shutdown",
+    "graceful-completion",
+    "deterministic-termination",
+    "deterministic-shutdown",
+    "deterministic-completion",
     "typescript",
     "ts",
     "dangling-promise",

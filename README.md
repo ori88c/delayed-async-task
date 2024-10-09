@@ -7,14 +7,27 @@ Key features include:
 * __Status Communication__: Easily check the current status of the scheduled task.
 * __Graceful Termination__: Await the completion of an ongoing execution, ensuring deterministic termination when needed.
 
-This class is ideal for scenarios where precise control over the execution and termination of asynchronous tasks is required.
+This class is ideal for scenarios where precise control over the execution and termination of asynchronous tasks is required. If you need to manage **multiple** asynchronous tasks, potentially in large numbers, consider the [delayed-async-tasks-manager](https://www.npmjs.com/package/delayed-async-tasks-manager) package, which extends the functionality of this package.
 
-## Key Features :sparkles:
+## Table of Contents
+
+* [Key Features](#key-features)
+* [API](#api)
+* [Execution Status Getters](#execution-status-getters)
+* [Graceful and Deterministic Termination](#graceful-termination)
+* [Zero Over-Engineering, No External Dependencies](#no-external-dependencies)
+* [Non-Persistent Scheduling](#non-persistent)
+* [Error Handling](#error-handling)
+* [Use-case Example](#use-case-example)
+* [Breaking Change in Version 2.0.0](#breaking-change-2)
+* [License](#license)
+
+## Key Features :sparkles:<a id="key-features"></a>
 
 * __Modern Substitute for Javascript's 'setTimeout'__: Specifically designed for scheduling asynchronous tasks.
-* __Execution Status Getters__: Allows users to check the task's execution status, helping to prevent potential race conditions.
-* __Graceful and Deterministic Termination__: The `awaitCompletionIfCurrentlyExecuting` method resolves once the currently executing task finishes, or resolves immediately if the task is not executing.
-* __Robust Error Handling__: If the task throws an uncaught error, the error is captured and accessible via the `uncaughtRejection` getter.
+* __Execution Status Getters :bar_chart:__: Allows users to check the task's execution status, helping to prevent potential race conditions.
+* __Graceful and Deterministic Termination :hourglass:__: The `awaitCompletionIfCurrentlyExecuting` method resolves once the currently executing task finishes, or resolves immediately if the task is not executing.
+* __Robust Error Handling :warning:__: If the task throws an uncaught error, the error is captured and accessible via the `uncaughtRejection` getter.
 * __Comprehensive Documentation :books:__: The class is thoroughly documented, enabling IDEs to provide helpful tooltips that enhance the coding experience.
 * __Fully Tested :test_tube:__: Extensively covered by unit tests.
 * __No External Runtime Dependencies__: Lightweight component, only development dependencies are used.
@@ -22,7 +35,7 @@ This class is ideal for scenarios where precise control over the execution and t
 * ES2020 Compatibility.
 * TypeScript support.
 
-## API
+## API :globe_with_meridians:<a id="api"></a>
 
 The `DelayedAsyncTask` class provides the following methods:
 
@@ -31,7 +44,7 @@ The `DelayedAsyncTask` class provides the following methods:
 
 If needed, refer to the code documentation for a more comprehensive description of each method.
 
-## Execution Status Getters :rocket:
+## Execution Status Getters :mag:<a id="execution-status-getters"></a>
 
 The `DelayedAsyncTask` class provides five getter methods to communicate the task's status to users:
 
@@ -41,7 +54,7 @@ The `DelayedAsyncTask` class provides five getter methods to communicate the tas
 * `isCompleted`: Indicates that the task has completed.
 * `isUncaughtRejectionOccurred`: Indicates that the task threw an uncaught error. The error can be accessed using the `uncaughtRejection` getter.
 
-## Graceful and Deterministic Termination :hourglass:
+## Graceful and Deterministic Termination :hourglass:<a id="graceful-termination"></a>
 
 In the context of asynchronous tasks and schedulers, graceful and deterministic termination is **often overlooked**. `DelayedAsyncTask` provides an out-of-the-box mechanism to await the completion of an asynchronous task that has already started but not yet finished, via the `awaitCompletionIfCurrentlyExecuting` method.
 
@@ -100,17 +113,17 @@ class Component {
 
 Another scenario where this feature is highly recommended is when a schedule might be aborted, such as in an abort-and-reschedule situation. If the task is currently executing, you may not be able to abort it. In such cases, you can ignore the reschedule request, await the current execution to complete, or implement any other business logic that suits your requirements.
 
-## Zero Over-Engineering, No External Dependencies
+## Zero Over-Engineering, No External Dependencies<a id="no-external-dependencies"></a>
 
 This component provides a lightweight, dependency-free solution. It is designed to be simple and efficient, ensuring minimal overhead. Additionally, it can serve as a building block for more advanced implementations, such as a Delayed Async Tasks Manager, if needed.
 
-## Non-Persistent Scheduling
+## Non-Persistent Scheduling<a id="non-persistent"></a>
 
 This component features non-durable scheduling, which means that if the app crashes or goes down, scheduling stops.
 
 If you need to guarantee durability over a multi-node deployment, consider using this scheduler as a building block or use other custom-made solutions for that purpose.
 
-## Error Handling :warning:
+## Error Handling :warning:<a id="error-handling"></a>
 
 Unlike `setTimeout` in Node.js, where errors from rejected promises propagate to the event loop and trigger an `uncaughtRejection` event, this package offers robust error handling:
 
@@ -119,7 +132,7 @@ Unlike `setTimeout` in Node.js, where errors from rejected promises propagate to
 
 Ideally, a delayed task should handle its own errors and **avoid** throwing uncaught exceptions.
 
-## Use-case Example :man_technologist:
+## Use-case Example :man_technologist:<a id="use-case-example"></a>
 
 Consider a Background Updates Manager. For simplicity, we assume that updates occur only following an on-demand request by the admin, triggered by the execution of the `scheduleNextJob` method. Additionally, assume that only one future background update task can be scheduled at any given time. This means that scheduling a new task will abort any previously scheduled task that has not yet started.
 
@@ -180,10 +193,10 @@ class BackgroundUpdatesManager {
 }
 ```
 
-## Breaking Change in Version 2.0.0
+## Breaking Change in Version 2.0.0 :boom:<a id="breaking-change-2"></a>
 
 In version 2.0.0, the target compatibility has been upgraded from ES6 to ES2020. This change was made to leverage the widespread adoption of ES2020, in particular its native support for async/await.
 
-## License :scroll:
+## License :scroll:<a id="license"></a>
 
 [MIT](LICENSE)
